@@ -13,34 +13,23 @@ namespace Sonata\ClassificationBundle\Document;
 
 use Sonata\ClassificationBundle\Model\Category as ModelCategory;
 
-use Sonata\DoctrineORMAdminBundle\Datagrid\Pager;
-use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
-
-class CollectionManager extends BaseDocumentManager implements CollectionManagerInterface
+abstract class BaseCategory extends ModelCategory
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getPager(array $criteria, $page, $maxPerPage = 10)
+	protected $count;
+
+	public function setCount($cnt) {
+		$this->count = $cnt;
+		return $this;
+	}
+
+	public function getCount() {
+		return $this->count;
+	}
+
+	public function disableChildrenLazyLoading()
     {
-        $parameters = array();
-
-        $query = $this->getRepository()
-            ->createQueryBuilder('c')
-            ->select('c');
-
-        $criteria['enabled'] = isset($criteria['enabled']) ? $criteria['enabled'] : true;
-        $query->andWhere('c.enabled = :enabled');
-        $parameters['enabled'] = $criteria['enabled'];
-
-        $query->setParameters($parameters);
-
-        $pager = new Pager();
-        $pager->setMaxPerPage($maxPerPage);
-        $pager->setQuery(new ProxyQuery($query));
-        $pager->setPage($page);
-        $pager->init();
-
-        return $pager;
+        if (is_object($this->children)) {
+            $this->children->setInitialized(true);
+        }
     }
 }

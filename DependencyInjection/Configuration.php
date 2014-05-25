@@ -29,7 +29,11 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('sonata_classification');
 
         $rootNode
-            ->children()
+	        ->children()
+		        ->scalarNode('db_driver')->isRequired()->end()
+		        ->scalarNode('default_context')->isRequired()->end()
+	        ->end()
+        	->children()
                 ->arrayNode('class')
                     ->addDefaultsIfNotSet()
                     ->children()
